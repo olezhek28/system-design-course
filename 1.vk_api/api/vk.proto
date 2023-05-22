@@ -1,0 +1,307 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/olezhek28/auth/pkg/note_v1;note_v1";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "VK"
+    version: "1.0.0"
+    contact: {
+      name: "Oleg Kozyrev"
+      email: "okozyrev@ozon.ru"
+    };
+  };
+
+  schemes: HTTP,
+  schemes: HTTPS,
+  consumes: "application/json",
+  produces: "application/json",
+};
+
+// Операции для работы с параметрами пользователей
+service UserV1 {
+  // Возвращает параметры пользователя по id
+  rpc Get (GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get: "/user/v1"
+    };
+  }
+}
+
+message GetRequest {
+  // Идентификатор пользователя, параметры которого запрашиваем
+  int64 user_id = 1;
+}
+
+message GetResponse {
+  // Параметры пользователя
+  User user = 1;
+}
+
+// Операции для работы с друзьями пользователей
+service FriendV1 {
+  // Добавляет пользователю нового друга по id
+  rpc Add (AddRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/friend/v1"
+      body: "*"
+    };
+  }
+
+  // Удаляет друга у пользователя по id
+  rpc Delete (DeleteRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/friend/v1"
+    };
+  }
+
+  // Возвращает список параметров друзей пользователя
+  rpc GetList (GetListRequest) returns (GetListResponse) {
+    option (google.api.http) = {
+      get: "/friend/v1/list"
+    };
+  }
+}
+
+message User {
+  // Идентификатор пользователя
+  int64 id = 1;
+  // Имя пользователя
+  string name = 2;
+  // Фамилия пользователя
+  string surname = 3;
+  // Никнейм пользователя
+  string nickname = 4;
+  // Ссылка на аватар пользователя
+  string avatar_link = 5;
+  // Электронная почта пользователя
+  string email = 6;
+  // Номер телефона пользователя
+  string phone = 7;
+  // О себе
+  string about = 8;
+}
+
+message AddRequest {
+  // Идентификатор пользователя, которого добавляем в друзья
+  int64 friend_id = 1;
+}
+
+message DeleteRequest {
+  // Идентификатор пользователя, которого удаляем из друзей
+  int64 friend_id = 1;
+}
+
+message GetListRequest {
+  // Идентификатор пользователя, у которого запрашиваем список друзей
+  int64 user_id = 1;
+  // Количество друзей, которое необходимо вернуть
+  int64 limit = 2;
+  // Смещение от начала списка друзей
+  int64 offset = 3;
+}
+
+message GetListResponse {
+  // Список друзей пользователя c их параметрами
+  repeated User friends = 1;
+}
+
+// Операции для работы с публикациями
+service PostV1 {
+  // Создает новую публикацию на стене пользователя
+  rpc Publish (PublishRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/post/v1"
+      body: "*"
+    };
+  }
+
+  // Загружает контент публикации
+  rpc UploadContent (UploadContentRequest) returns (UploadContentResponse) {
+    option (google.api.http) = {
+      post: "/post/v1/upload-content"
+      body: "*"
+    };
+  }
+}
+
+message Content{
+  // Ссылка на контент публикации
+  string content_link = 1;
+  // Тип контента публикации
+  string content_type = 2;
+}
+
+message PublishRequest {
+  // Идентификатор пользователя, на стене которого создаем публикацию
+  int64 user_id = 1;
+  // Текст публикации
+  string text = 2;
+  // Контент публикации (его может не быть)
+  repeated Content content = 3;
+}
+
+message UploadContentRequest {
+  // Идентификатор пользователя, на стене которого создаем публикацию
+  int64 user_id = 1;
+  // Контент публикации
+  repeated bytes content = 2;
+}
+
+message UploadContentResponse {
+  // Список контента публикации
+  repeated Content content = 1;
+}
+
+// Операции для работы с лентой публикаций
+service WallV1 {
+  // Возвращает публикации пользователя по id
+  rpc GetWall (GetWallRequest) returns (GetWallResponse) {
+    option (google.api.http) = {
+      get: "/wall/v1/post"
+    };
+  }
+
+  // Возвращает публикации друзей пользователя по id
+  rpc GetFeed (GetFeedRequest) returns (GetFeedResponse) {
+    option (google.api.http) = {
+      get: "/wall/v1/feed"
+    };
+  }
+}
+
+message GetWallRequest {
+  // Идентификатор пользователя, ленту которого запрашиваем
+  int64 user_id = 1;
+  // Количество публикаций в ленте, которое необходимо вернуть
+  int64 limit = 2;
+  // Смещение от начала ленты
+  int64 offset = 3;
+}
+
+message GetWallResponse {
+  // Список публикаций пользователя в ленте
+  repeated Post posts = 1;
+}
+
+message GetFeedRequest {
+  // Количество публикаций в ленте, которое необходимо вернуть
+  int64 limit = 1;
+  // Смещение от начала ленты
+  int64 offset = 2;
+}
+
+message GetFeedResponse {
+  // Список публикаций друзей пользователя в ленте
+  repeated Post posts = 1;
+}
+
+message Post {
+  // Идентификатор публикации
+  int64 id = 1;
+  // Идентификатор пользователя, на стене которого создана публикация
+  int64 user_id = 2;
+  // Текст публикации
+  string text = 3;
+  // Список контента (её может не быть)
+  repeated Content content = 4;
+  // Дата создания публикации
+  google.protobuf.Timestamp created_at = 5;
+}
+
+// Операции для работы с диалогами
+service DialogV1 {
+  // Возвращает список диалогов пользователя
+  rpc GetDialogList (GetDialogListRequest) returns (GetDialogListResponse) {
+    option (google.api.http) = {
+      get: "/dialog/v1/dialog-list"
+    };
+  }
+
+  // Возвращает сообщения в диалоге пользователя с другим пользователем
+  rpc GetMessage (GetMessageRequest) returns (GetMessageResponse) {
+    option (google.api.http) = {
+      get: "/dialog/v1/message-list"
+    };
+  }
+}
+
+message GetDialogListRequest {
+  // Количество диалогов, которое необходимо вернуть
+  int64 limit = 1;
+  // Смещение от начала списка диалогов
+  int64 offset = 2;
+}
+
+message GetDialogListResponse {
+  // Список диалогов пользователя
+  repeated Dialog dialogs = 1;
+}
+
+message Dialog {
+  // Идентификатор диалога
+  int64 id = 1;
+  // Идентификатор пользователя, с которым ведется диалог
+  int64 friend_id = 2;
+  // Дата и время последнего сообщения в диалоге
+  google.protobuf.Timestamp last_message_timestamp = 3;
+}
+
+message GetMessageRequest {
+  // Идентификатор пользователя, для которого запрашиваем список сообщений
+  int64 user_id = 1;
+  // Идентификатор диалога, сообщения которого запрашиваем
+  int64 dialog_id = 2;
+  // Количество сообщений, которое необходимо вернуть
+  int64 limit = 3;
+  // Смещение от начала списка сообщений
+  int64 offset = 4;
+}
+
+message GetMessageResponse {
+  // Список сообщений в диалоге
+  repeated Message messages = 1;
+}
+
+message Message {
+  // Идентификатор сообщения
+  int64 id = 1;
+  // Идентификатор диалога, в котором находится сообщение
+  int64 dialog_id = 2;
+  // Идентификатор сообщения, на которое отвечает данное сообщение (если есть)
+  google.protobuf.Int64Value reply_id = 3;
+  // Идентификатор пользователя, который отправил сообщение
+  int64 user_id = 4;
+  // Текст сообщения
+  string text = 5;
+  // Список контента (её может не быть)
+  repeated Content content = 6;
+  // Дата отправки сообщения
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// Операции для обмена сообщениями
+service MessageV1 {
+  // Отправляет сообщение от одного пользователя другому
+  rpc Send (SendRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/mail/v1/send"
+      body: "*"
+    };
+  }
+}
+
+message SendRequest {
+  // Идентификатор пользователя, которому отправляется сообщение
+  int64 user_id = 1;
+  // Текст сообщения
+  string text = 2;
+  // Список контента (её может не быть)
+  repeated Content content = 4;
+}

@@ -1,0 +1,814 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "VK",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Oleg Kozyrev",
+      "email": "okozyrev@ozon.ru"
+    }
+  },
+  "tags": [
+    {
+      "name": "UserV1"
+    },
+    {
+      "name": "FriendV1"
+    },
+    {
+      "name": "PostV1"
+    },
+    {
+      "name": "WallV1"
+    },
+    {
+      "name": "DialogV1"
+    },
+    {
+      "name": "MessageV1"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/dialog/v1/dialog-list": {
+      "get": {
+        "summary": "Возвращает список диалогов пользователя",
+        "operationId": "DialogV1_GetDialogList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetDialogListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Количество диалогов, которое необходимо вернуть",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Смещение от начала списка диалогов",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "DialogV1"
+        ]
+      }
+    },
+    "/dialog/v1/message-list": {
+      "get": {
+        "summary": "Возвращает сообщения в диалоге пользователя с другим пользователем",
+        "operationId": "DialogV1_GetMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "Идентификатор пользователя, для которого запрашиваем список сообщений",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "dialogId",
+            "description": "Идентификатор диалога, сообщения которого запрашиваем",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Количество сообщений, которое необходимо вернуть",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Смещение от начала списка сообщений",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "DialogV1"
+        ]
+      }
+    },
+    "/friend/v1": {
+      "delete": {
+        "summary": "Удаляет друга у пользователя по id",
+        "operationId": "FriendV1_Delete",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "friendId",
+            "description": "Идентификатор пользователя, которого удаляем из друзей",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FriendV1"
+        ]
+      },
+      "put": {
+        "summary": "Добавляет пользователю нового друга по id",
+        "operationId": "FriendV1_Add",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddRequest"
+            }
+          }
+        ],
+        "tags": [
+          "FriendV1"
+        ]
+      }
+    },
+    "/friend/v1/list": {
+      "get": {
+        "summary": "Возвращает список параметров друзей пользователя",
+        "operationId": "FriendV1_GetList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "Идентификатор пользователя, у которого запрашиваем список друзей",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Количество друзей, которое необходимо вернуть",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Смещение от начала списка друзей",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "FriendV1"
+        ]
+      }
+    },
+    "/mail/v1/send": {
+      "post": {
+        "summary": "Отправляет сообщение от одного пользователя другому",
+        "operationId": "MessageV1_Send",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SendRequest"
+            }
+          }
+        ],
+        "tags": [
+          "MessageV1"
+        ]
+      }
+    },
+    "/post/v1": {
+      "post": {
+        "summary": "Создает новую публикацию на стене пользователя",
+        "operationId": "PostV1_Publish",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PublishRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostV1"
+        ]
+      }
+    },
+    "/post/v1/upload-content": {
+      "post": {
+        "summary": "Загружает контент публикации",
+        "operationId": "PostV1_UploadContent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UploadContentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UploadContentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PostV1"
+        ]
+      }
+    },
+    "/user/v1": {
+      "get": {
+        "summary": "Возвращает параметры пользователя по id",
+        "operationId": "UserV1_Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "Идентификатор пользователя, параметры которого запрашиваем",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UserV1"
+        ]
+      }
+    },
+    "/wall/v1/feed": {
+      "get": {
+        "summary": "Возвращает публикации друзей пользователя по id",
+        "operationId": "WallV1_GetFeed",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetFeedResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "description": "Количество публикаций в ленте, которое необходимо вернуть",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Смещение от начала ленты",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "WallV1"
+        ]
+      }
+    },
+    "/wall/v1/post": {
+      "get": {
+        "summary": "Возвращает публикации пользователя по id",
+        "operationId": "WallV1_GetWall",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetWallResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "userId",
+            "description": "Идентификатор пользователя, ленту которого запрашиваем",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "description": "Количество публикаций в ленте, которое необходимо вернуть",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "Смещение от начала ленты",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "WallV1"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "AddRequest": {
+      "type": "object",
+      "properties": {
+        "friendId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя, которого добавляем в друзья"
+        }
+      }
+    },
+    "Content": {
+      "type": "object",
+      "properties": {
+        "contentLink": {
+          "type": "string",
+          "title": "Ссылка на контент публикации"
+        },
+        "contentType": {
+          "type": "string",
+          "title": "Тип контента публикации"
+        }
+      }
+    },
+    "Dialog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор диалога"
+        },
+        "friendId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя, с которым ведется диалог"
+        },
+        "lastMessageTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Дата и время последнего сообщения в диалоге"
+        }
+      }
+    },
+    "GetDialogListResponse": {
+      "type": "object",
+      "properties": {
+        "dialogs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Dialog"
+          },
+          "title": "Список диалогов пользователя"
+        }
+      }
+    },
+    "GetFeedResponse": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Post"
+          },
+          "title": "Список публикаций друзей пользователя в ленте"
+        }
+      }
+    },
+    "GetListResponse": {
+      "type": "object",
+      "properties": {
+        "friends": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/User"
+          },
+          "title": "Список друзей пользователя c их параметрами"
+        }
+      }
+    },
+    "GetMessageResponse": {
+      "type": "object",
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Message"
+          },
+          "title": "Список сообщений в диалоге"
+        }
+      }
+    },
+    "GetResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User",
+          "title": "Параметры пользователя"
+        }
+      }
+    },
+    "GetWallResponse": {
+      "type": "object",
+      "properties": {
+        "posts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Post"
+          },
+          "title": "Список публикаций пользователя в ленте"
+        }
+      }
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор сообщения"
+        },
+        "dialogId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор диалога, в котором находится сообщение"
+        },
+        "replyId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор сообщения, на которое отвечает данное сообщение (если есть)"
+        },
+        "userId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя, который отправил сообщение"
+        },
+        "text": {
+          "type": "string",
+          "title": "Текст сообщения"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Content"
+          },
+          "title": "Список контента (её может не быть)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Дата отправки сообщения"
+        }
+      }
+    },
+    "Post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор публикации"
+        },
+        "userId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя, на стене которого создана публикация"
+        },
+        "text": {
+          "type": "string",
+          "title": "Текст публикации"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Content"
+          },
+          "title": "Список контента (её может не быть)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Дата создания публикации"
+        }
+      }
+    },
+    "PublishRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя, на стене которого создаем публикацию"
+        },
+        "text": {
+          "type": "string",
+          "title": "Текст публикации"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Content"
+          },
+          "title": "Контент публикации (его может не быть)"
+        }
+      }
+    },
+    "SendRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя, которому отправляется сообщение"
+        },
+        "text": {
+          "type": "string",
+          "title": "Текст сообщения"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Content"
+          },
+          "title": "Список контента (её может не быть)"
+        }
+      }
+    },
+    "UploadContentRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя, на стене которого создаем публикацию"
+        },
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          },
+          "title": "Контент публикации"
+        }
+      }
+    },
+    "UploadContentResponse": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/Content"
+          },
+          "title": "Список контента публикации"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "title": "Идентификатор пользователя"
+        },
+        "name": {
+          "type": "string",
+          "title": "Имя пользователя"
+        },
+        "surname": {
+          "type": "string",
+          "title": "Фамилия пользователя"
+        },
+        "nickname": {
+          "type": "string",
+          "title": "Никнейм пользователя"
+        },
+        "avatarLink": {
+          "type": "string",
+          "title": "Ссылка на аватар пользователя"
+        },
+        "email": {
+          "type": "string",
+          "title": "Электронная почта пользователя"
+        },
+        "phone": {
+          "type": "string",
+          "title": "Номер телефона пользователя"
+        },
+        "about": {
+          "type": "string",
+          "title": "О себе"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
