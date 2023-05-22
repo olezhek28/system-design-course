@@ -76,33 +76,35 @@ message User {
   string name = 2;
   // Фамилия пользователя
   string surname = 3;
+  // Никнейм пользователя
+  string nickname = 4;
   // Ссылка на аватар пользователя
-  string avatar_link = 4;
+  string avatar_link = 5;
   // Электронная почта пользователя
-  string email = 5;
+  string email = 6;
   // Номер телефона пользователя
-  string phone = 6;
+  string phone = 7;
   // О себе
-  string about = 7;
+  string about = 8;
 }
 
 message AddRequest {
-  // Идентификатор пользователя, которому добавляем друга
-  int64 user_id = 1;
   // Идентификатор пользователя, которого добавляем в друзья
-  int64 friend_id = 2;
+  int64 friend_id = 1;
 }
 
 message DeleteRequest {
-  // Идентификатор пользователя, у которого удаляем друга
-  int64 user_id = 1;
   // Идентификатор пользователя, которого удаляем из друзей
-  int64 friend_id = 2;
+  int64 friend_id = 1;
 }
 
 message GetListRequest {
   // Идентификатор пользователя, у которого запрашиваем список друзей
   int64 user_id = 1;
+  // Количество друзей, которое необходимо вернуть
+  int64 limit = 2;
+  // Смещение от начала списка друзей
+  int64 offset = 3;
 }
 
 message GetListResponse {
@@ -129,47 +131,52 @@ service PostV1 {
   }
 }
 
+message Content{
+  // Ссылка на контент публикации
+  string content_link = 1;
+  // Тип контента публикации
+  string content_type = 2;
+}
+
 message PublishRequest {
   // Идентификатор пользователя, на стене которого создаем публикацию
   int64 user_id = 1;
   // Текст публикации
   string text = 2;
-  // Ссылка на контент публикации (её может не быть)
-  google.protobuf.StringValue content_link = 3;
+  // Контент публикации (его может не быть)
+  repeated Content content = 3;
 }
 
 message UploadContentRequest {
   // Идентификатор пользователя, на стене которого создаем публикацию
   int64 user_id = 1;
   // Контент публикации
-  bytes content = 2;
+  repeated bytes content = 2;
 }
 
 message UploadContentResponse {
-  // Ссылка на контент публикации
-  string content_link = 1;
+  // Список контента публикации
+  repeated Content content = 1;
 }
 
 // Операции для работы с лентой публикаций
-service FeedV1 {
-  // Возвращает ленту публикаций пользователя по id
-  rpc GetMyFeed (GetMyFeedRequest) returns (GetMyFeedResponse) {
+service WallV1 {
+  // Возвращает публикации пользователя по id
+  rpc GetWall (GetWallRequest) returns (GetWallResponse) {
     option (google.api.http) = {
-      post: "/feed/v1/my"
-      body: "*"
+      get: "/wall/v1/post"
     };
   }
 
-  // Возвращает ленту публикаций друзей пользователя по id
-  rpc GetOtherFeed (GetOtherFeedRequest) returns (GetOtherFeedResponse) {
+  // Возвращает публикации друзей пользователя по id
+  rpc GetFeed (GetFeedRequest) returns (GetFeedResponse) {
     option (google.api.http) = {
-      post: "/feed/v1/other"
-      body: "*"
+      get: "/wall/v1/feed"
     };
   }
 }
 
-message GetMyFeedRequest {
+message GetWallRequest {
   // Идентификатор пользователя, ленту которого запрашиваем
   int64 user_id = 1;
   // Количество публикаций в ленте, которое необходимо вернуть
@@ -178,21 +185,19 @@ message GetMyFeedRequest {
   int64 offset = 3;
 }
 
-message GetMyFeedResponse {
+message GetWallResponse {
   // Список публикаций пользователя в ленте
   repeated Post posts = 1;
 }
 
-message GetOtherFeedRequest {
-  // Идентификатор пользователя, для которого хотим вернуть список публикаций его друзей
-  int64 user_id = 1;
+message GetFeedRequest {
   // Количество публикаций в ленте, которое необходимо вернуть
-  int64 limit = 2;
+  int64 limit = 1;
   // Смещение от начала ленты
-  int64 offset = 3;
+  int64 offset = 2;
 }
 
-message GetOtherFeedResponse {
+message GetFeedResponse {
   // Список публикаций друзей пользователя в ленте
   repeated Post posts = 1;
 }
@@ -204,8 +209,8 @@ message Post {
   int64 user_id = 2;
   // Текст публикации
   string text = 3;
-  // Ссылка на контент публикации (её может не быть)
-  google.protobuf.StringValue content_link = 4;
+  // Список контента (её может не быть)
+  repeated Content content = 4;
   // Дата создания публикации
   google.protobuf.Timestamp created_at = 5;
 }
@@ -228,12 +233,10 @@ service DialogV1 {
 }
 
 message GetDialogListRequest {
-  // Идентификатор пользователя, для которого запрашиваем список диалогов
-  int64 user_id = 1;
   // Количество диалогов, которое необходимо вернуть
-  int64 limit = 2;
+  int64 limit = 1;
   // Смещение от начала списка диалогов
-  int64 offset = 3;
+  int64 offset = 2;
 }
 
 message GetDialogListResponse {
@@ -244,12 +247,10 @@ message GetDialogListResponse {
 message Dialog {
   // Идентификатор диалога
   int64 id = 1;
-  // Идентификатор пользователя, который начал диалог
-  int64 user_id = 2;
   // Идентификатор пользователя, с которым ведется диалог
-  int64 friend_id = 3;
+  int64 friend_id = 2;
   // Дата и время последнего сообщения в диалоге
-  google.protobuf.Timestamp last_message_timestamp = 4;
+  google.protobuf.Timestamp last_message_timestamp = 3;
 }
 
 message GetMessageRequest {
@@ -273,33 +274,34 @@ message Message {
   int64 id = 1;
   // Идентификатор диалога, в котором находится сообщение
   int64 dialog_id = 2;
+  // Идентификатор сообщения, на которое отвечает данное сообщение (если есть)
+  google.protobuf.Int64Value reply_id = 3;
   // Идентификатор пользователя, который отправил сообщение
-  int64 user_id = 3;
+  int64 user_id = 4;
   // Текст сообщения
-  string text = 4;
-  // Ссылка на контент сообщения (её может не быть)
-  google.protobuf.StringValue content_link = 5;
+  string text = 5;
+  // Список контента (её может не быть)
+  repeated Content content = 6;
   // Дата отправки сообщения
-  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp created_at = 7;
 }
 
 // Операции для обмена сообщениями
-service MailV1 {
+service MessageV1 {
   // Отправляет сообщение от одного пользователя другому
   rpc Send (SendRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/mail/v1/send"
+      body: "*"
     };
   }
 }
 
 message SendRequest {
-  // Идентификатор пользователя, который отправляет сообщение
-  int64 user_id = 1;
   // Идентификатор пользователя, которому отправляется сообщение
-  int64 friend_id = 2;
+  int64 user_id = 1;
   // Текст сообщения
-  string text = 3;
-  // Ссылка на контент сообщения (её может не быть)
-  google.protobuf.StringValue content_link = 4;
+  string text = 2;
+  // Список контента (её может не быть)
+  repeated Content content = 4;
 }
